@@ -5,6 +5,9 @@ on:
     - cron: '*/30 * * * *'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -21,9 +24,9 @@ jobs:
       - name: Generate
         run: python generate.py
 
-      - name: Commit
+      - name: Commit and push
         run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git add normal.txt whitelist.txt
-          git diff --quiet && git diff --staged --quiet || (git commit -m "update subs" && git push)
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add normal.txt whitelist.txt || true
+          git diff --quiet && git diff --staged --quiet || (git commit -m "update subscriptions" && git push)
