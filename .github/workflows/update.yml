@@ -1,0 +1,31 @@
+name: Update VLESS Subscriptions
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'   # каждые 30 минут
+  workflow_dispatch:         # можно запускать вручную
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Generate subscriptions
+        run: python generate.py
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add normal.txt whitelist.txt
+          git diff --quiet && git diff --staged --quiet || git commit -m "update subscriptions"
+          git push
